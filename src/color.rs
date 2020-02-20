@@ -29,8 +29,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// // 6 character definition
     /// let black_coral = Color::from_hex("565676");
     ///
@@ -71,8 +70,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.r()); // 172
@@ -86,8 +84,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.red()); // 172
@@ -101,8 +98,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.g()); // 159
@@ -116,8 +112,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.green()); // 159
@@ -131,8 +126,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.b()); // 187
@@ -146,8 +140,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.blue()); // 187
@@ -161,8 +154,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{:?}", pastel_purple.rgb()); // (172, 159, 187)
@@ -176,8 +168,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.to_rgb_string()); // rgb(172, 159, 187)
@@ -191,8 +182,7 @@ impl Color {
     /// # Example
     ///
     /// ```
-    /// use wasm_svg_graphics::color::Color;
-    ///
+    /// # use svg_definitions::color::Color;
     /// let pastel_purple = Color::new(172, 159, 187);
     ///
     /// println!("{}", pastel_purple.to_hex_string()); // #ac9fbb
@@ -281,7 +271,6 @@ pub mod default {
 #[cfg(test)]
 mod tests {
     use crate::color::Color;
-    //use super::default;
 
     #[test]
     fn test_from_hex() {

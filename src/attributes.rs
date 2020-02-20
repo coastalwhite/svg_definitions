@@ -73,22 +73,42 @@ impl ToString for Attribute {
 
 // Implementation of AttributeValue
 impl AttributeValue {
+    /// Create new AttributeValue::ViewBox
+    ///
+    /// # Note
+    /// For a shorthand look at: [From<(i32, i32, i32, i32)>](#impl-From<(i32%2C%20i32%2C%20i32%2C%20i32)>)
     pub fn new_viewbox(x: i32, y: i32, width: i32, height: i32) -> AttributeValue {
         AttributeValue::ViewBox(ViewBoxProps::new(x, y, width, height))
     }
 
+    /// Create new AttributeValue::Identifier
+    ///
+    /// # Note
+    /// Will return error if not allowed characters are used
     pub fn new_id(id: &str) -> Result<AttributeValue, usize> {
         Ok(AttributeValue::Identifier(IdentifierProps::new(id)?))
     }
 
+    /// Create new AttributeValue::Color
+    ///
+    /// # Note
+    /// For a shorthand look at: [From<(Color)>](#impl-From<Color>)
     pub fn new_color(red: u8, green: u8, blue: u8) -> AttributeValue {
         AttributeValue::Color(Color::new(red, green, blue))
     }
 
+    /// Create new AttributeValue::ViewBox
+    ///
+    /// # Note
+    /// For a shorthand look at: [From<i32>](#impl-From<i32>)
     pub fn new_number(number: i32) -> AttributeValue {
         AttributeValue::Number(number)
     }
 
+    /// Create new AttributeValue::Reference
+    ///
+    /// # Note
+    /// Will return error if not allowed characters are used
     pub fn new_reference(reference_id: &str) -> Result<AttributeValue, usize> {
         Ok(AttributeValue::Reference(IdentifierProps::new(
             reference_id,
@@ -124,18 +144,21 @@ impl ToString for AttributeValue {
     }
 }
 
+/// Shorthand to create [AttributeValue::Color]
 impl From<Color> for AttributeValue {
     fn from(color: Color) -> AttributeValue {
         AttributeValue::Color(color)
     }
 }
 
+/// Shorthand to create [AttributeValue::Number]
 impl From<i32> for AttributeValue {
     fn from(number: i32) -> AttributeValue {
         AttributeValue::Number(number)
     }
 }
 
+/// Shorthand to create [AttributeValue::ViewBox]
 impl From<(i32, i32, i32, i32)> for AttributeValue {
     fn from(view_box: (i32, i32, i32, i32)) -> AttributeValue {
         AttributeValue::new_viewbox(view_box.0, view_box.1, view_box.2, view_box.3)
