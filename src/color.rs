@@ -2,7 +2,7 @@
 
 use std::hash::{Hash, Hasher};
 
-/// Represents colors within the WASM SVG GRAPHICS lib
+/// Represents color
 #[derive(Debug, Eq, Copy)]
 pub struct Color {
     red: u8,
@@ -10,6 +10,14 @@ pub struct Color {
     blue: u8,
 }
 
+/// Represents a color with can become transparent
+#[derive(Debug, Eq, Copy)]
+pub enum TColor {
+    RGB(Color),
+    Transparent,
+}
+
+// Implementation of Color
 impl Color {
     /// Constructor for color
     pub fn new(red: u8, green: u8, blue: u8) -> Color {
@@ -224,6 +232,37 @@ impl Hash for Color {
     }
 }
 
+// Implementation of TColor
+impl TColor {
+    /// Returns either the hex of 'color' or "transparent" for Color(color) and Transparent, respectively
+    pub fn to_string(&self) -> String {
+        match self {
+            TColor::RGB(color) => color.to_hex_string(),
+            TColor::Transparent => String::from("transparent"),
+        }
+    }
+}
+
+impl PartialEq for TColor {
+    fn eq(&self, other: &Self) -> bool {
+        match (self, other) {
+            (TColor::Transparent, TColor::Transparent) => true,
+            (TColor::RGB(color1), TColor::RGB(color2)) => color1 == color2,
+            _ => false,
+        }
+    }
+}
+
+impl Clone for TColor {
+    fn clone(&self) -> Self {
+        match self {
+            TColor::Transparent => TColor::Transparent,
+            TColor::RGB(color) => TColor::RGB(color.clone()),
+        }
+    }
+}
+
+// Some default colors
 pub mod default {
     use super::Color;
 
@@ -237,43 +276,6 @@ pub mod default {
         green: 255,
         blue: 255,
     };
-}
-
-#[derive(Debug, Eq, Copy)]
-pub enum TransparentableColor {
-    RGB(Color),
-    Transparent,
-}
-
-impl TransparentableColor {
-    /// Returns either the hex of 'color' or "transparent" for Color(color) and Transparent, respectively
-    pub fn to_string(&self) -> String {
-        match self {
-            TransparentableColor::RGB(color) => color.to_hex_string(),
-            TransparentableColor::Transparent => String::from("transparent"),
-        }
-    }
-}
-
-impl PartialEq for TransparentableColor {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (TransparentableColor::Transparent, TransparentableColor::Transparent) => true,
-            (TransparentableColor::RGB(color1), TransparentableColor::RGB(color2)) => {
-                color1 == color2
-            }
-            _ => false,
-        }
-    }
-}
-
-impl Clone for TransparentableColor {
-    fn clone(&self) -> Self {
-        match self {
-            TransparentableColor::Transparent => TransparentableColor::Transparent,
-            TransparentableColor::RGB(color) => TransparentableColor::RGB(color.clone()),
-        }
-    }
 }
 
 #[cfg(test)]
