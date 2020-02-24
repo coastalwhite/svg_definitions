@@ -102,6 +102,11 @@ impl Element {
         self
     }
 
+    /// Gets an immutable reference to the tag_name of this Element
+    pub fn get_tag_name(&self) -> &TagName {
+        &self.tag_name
+    }
+
     /// Gets an immutable reference to the attributes of this Element
     pub fn get_attributes(&self) -> &Attributes {
         &self.attributes
