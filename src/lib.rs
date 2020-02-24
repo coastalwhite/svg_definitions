@@ -101,6 +101,16 @@ impl Element {
         self.attributes.insert(attribute, value.clone());
         self
     }
+
+    /// Gets an immutable reference to the attributes of this Element
+    pub fn get_attributes(&self) -> &Attributes {
+        &self.attributes
+    }
+
+    /// Gets an immutable reference to the children of this Element
+    pub fn get_children(&self) -> &Children {
+        &self.children
+    }
 }
 
 impl Clone for Element {
