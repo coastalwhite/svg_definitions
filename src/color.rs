@@ -11,7 +11,7 @@ pub struct Color {
 }
 
 /// Represents a color with can become transparent
-#[derive(Debug, Eq, Copy)]
+#[derive(Hash, Debug, Eq, Copy)]
 pub enum TColor {
     RGB(Color),
     Transparent,
@@ -252,7 +252,7 @@ impl Clone for TColor {
     }
 }
 
-// Some default colors
+/// Some useful default colors
 pub mod default {
     use super::Color;
 

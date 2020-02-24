@@ -1,9 +1,49 @@
+//! This module provides an easy and safe way to interact with attributes of [Elements](../struct.Element.html)
+//!
+//! # Note
+//! In the [crate::prelude](../prelude/index.html) the name for
+//! [Attribute](enum.Attribute.html) is [Attr](../prelude/index.html) and for
+//! [AttributeValue](enum.AttributeValue.html) is [AttrValue](../prelude/index.html)
+//!
+//! # Examples
+//! ## 1) Setting attributes of a circle
+//! ```
+//! use svg_definitions::prelude::*;
+//!
+//! let circle = SVGElem::new(Tag::Circle)
+//!     .set(Attr::Radius, (10.0).into())
+//!     .set(Attr::CenterX, 15.into())
+//!     .set(Attr::CenterY, 15.into())
+//!     .set(Attr::StrokeWidth, 1.into())
+//!     .set(Attr::StrokeColor, RGB::new(0,0,0).into())
+//!     .set(Attr::FillColor, RGBT::Transparent.into());
+//! ```
+//!
+//! ## 2) Setting attributes of a triangle
+//! ```
+//! use svg_definitions::prelude::*;
+//!
+//! let triangle = SVGElem::new(Tag::SVGPath)
+//!     .set(Attr::StrokeWidth, 1.into())
+//!     .set(Attr::StrokeColor, RGB::new(0,0,0).into())
+//!     .set(Attr::FillColor, RGBT::Transparent.into())
+//!     .set(Attr::PathDefinition, PathString::new()
+//!         .move_to((0.0, 0.0))
+//!         .line_to((10.0, 0.0))
+//!         .line_to((0.0, 10.0))
+//!         .line_to((0.0, 0.0))
+//!         .close_path()
+//!         .into()
+//!     );
+//! ```
+
 use std::clone::Clone;
 use std::convert::From;
 use std::hash::{Hash, Hasher};
 use std::string::ToString;
 
-use crate::color::Color;
+use crate::color::{Color, TColor};
+use crate::path::PathDefinitionString;
 
 /// An attribute to an Element
 #[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
@@ -21,6 +61,7 @@ pub enum Attribute {
     Height,
     ViewBox,
     Reference,
+    PathDefinition,
 }
 
 /// A value an Element Attribute may have
@@ -29,8 +70,14 @@ pub enum AttributeValue {
     ViewBox(ViewBoxProps),
     Identifier(IdentifierProps),
     Color(Color),
-    Number(i32),
+    TColor(TColor),
+    Integer(i32),
+
+    /// # NOTE
+    /// Will be rounded to two decimal points
+    Float(f64),
     Reference(IdentifierProps),
+    PathDefinitionValue(PathDefinitionString),
 }
 
 #[doc(hidden)]
@@ -67,6 +114,7 @@ impl ToString for Attribute {
             Height => "height",
             ViewBox => "viewBox",
             Reference => "href",
+            PathDefinition => "d",
         })
     }
 }
@@ -97,12 +145,20 @@ impl AttributeValue {
         AttributeValue::Color(Color::new(red, green, blue))
     }
 
-    /// Create new AttributeValue::ViewBox
+    /// Create new AttributeValue::Integer
     ///
     /// # Note
     /// For a shorthand look at: [From<i32>](#impl-From<i32>)
-    pub fn new_number(number: i32) -> AttributeValue {
-        AttributeValue::Number(number)
+    pub fn new_integer(number: i32) -> AttributeValue {
+        AttributeValue::Integer(number)
+    }
+
+    /// Create new AttributeValue::Float
+    ///
+    /// # Note
+    /// For a shorthand look at: [From<f64>](#impl-From<f64>)
+    pub fn new_float(number: f64) -> AttributeValue {
+        AttributeValue::Float(number)
     }
 
     /// Create new AttributeValue::Reference
@@ -114,6 +170,11 @@ impl AttributeValue {
             reference_id,
         )?))
     }
+
+    /// Create a new AttributeValue::PathDefinitionValue
+    pub fn new_path_definition(path_string: PathDefinitionString) -> AttributeValue {
+        AttributeValue::PathDefinitionValue(path_string)
+    }
 }
 
 impl Clone for AttributeValue {
@@ -124,8 +185,11 @@ impl Clone for AttributeValue {
             ViewBox(props) => ViewBox(props.clone()),
             Identifier(props) => Identifier(props.clone()),
             Color(props) => Color(props.clone()),
-            Number(props) => Number(props.clone()),
+            TColor(props) => TColor(props.clone()),
+            Integer(props) => Integer(props.clone()),
+            Float(props) => Float(props.clone()),
             Reference(props) => Reference(props.clone()),
+            PathDefinitionValue(props) => PathDefinitionValue(props.clone()),
         }
     }
 }
@@ -138,8 +202,11 @@ impl ToString for AttributeValue {
             ViewBox(props) => props.to_string(),
             Identifier(props) => props.to_string(),
             Color(props) => props.to_string(),
-            Number(props) => props.to_string(),
+            TColor(props) => props.to_string(),
+            Integer(props) => props.to_string(),
+            Float(props) => format!("{:.2}", props),
             Reference(props) => format!("#{}", props.to_string()),
+            PathDefinitionValue(props) => props.to_string(),
         }
     }
 }
@@ -151,10 +218,24 @@ impl From<Color> for AttributeValue {
     }
 }
 
-/// Shorthand to create [AttributeValue::Number]
+/// Shorthand to create [AttributeValue::TColor]
+impl From<TColor> for AttributeValue {
+    fn from(color: TColor) -> AttributeValue {
+        AttributeValue::TColor(color)
+    }
+}
+
+/// Shorthand to create [AttributeValue::Integer]
 impl From<i32> for AttributeValue {
     fn from(number: i32) -> AttributeValue {
-        AttributeValue::Number(number)
+        AttributeValue::Integer(number)
+    }
+}
+
+/// Shorthand to create [AttributeValue::Float]
+impl From<f64> for AttributeValue {
+    fn from(number: f64) -> AttributeValue {
+        AttributeValue::Float(number)
     }
 }
 
@@ -162,6 +243,13 @@ impl From<i32> for AttributeValue {
 impl From<(i32, i32, i32, i32)> for AttributeValue {
     fn from(view_box: (i32, i32, i32, i32)) -> AttributeValue {
         AttributeValue::new_viewbox(view_box.0, view_box.1, view_box.2, view_box.3)
+    }
+}
+
+/// Shorthand to create [AttributeValue::PathDefinitionValue]
+impl From<PathDefinitionString> for AttributeValue {
+    fn from(path_string: PathDefinitionString) -> AttributeValue {
+        AttributeValue::new_path_definition(path_string)
     }
 }
 
@@ -173,8 +261,11 @@ impl Hash for AttributeValue {
             ViewBox(props) => props.hash(state),
             Identifier(props) => props.hash(state),
             Color(props) => props.hash(state),
-            Number(props) => props.hash(state),
+            TColor(props) => props.hash(state),
+            Integer(props) => props.hash(state),
+            Float(props) => (format!("{:.2}", props)).hash(state),
             Reference(props) => props.hash(state),
+            PathDefinitionValue(props) => props.hash(state),
         }
     }
 }
