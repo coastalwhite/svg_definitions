@@ -32,6 +32,8 @@ pub mod color;
 pub mod path;
 pub mod prelude;
 
+pub type Point2D = (f64, f64);
+
 use std::clone::Clone;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};

@@ -33,12 +33,12 @@ use std::clone::Clone;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
+use crate::Point2D;
+
 #[derive(Debug)]
 pub struct PathDefinitionString {
     inner_string: String,
 }
-
-type Point2D = (f64, f64);
 
 impl PathDefinitionString {
     /// Creates a new empty instance of a PathDefinitionString
