@@ -29,7 +29,6 @@
 
 pub mod attribute_value;
 pub mod attributes;
-mod plain_string;
 pub mod prelude;
 
 pub type Point2D = (f64, f64);
@@ -40,8 +39,6 @@ use std::hash::{Hash, Hasher};
 
 use attribute_value::AttributeValue;
 use attributes::Attribute;
-
-use plain_string::PlainStringProps;
 
 type Attributes = HashMap<Attribute, AttributeValue>;
 type Children = Vec<Element>;
@@ -106,6 +103,7 @@ pub struct Element {
     tag_name: TagName,
     attributes: Attributes,
     children: Children,
+    inner: Option<String>
 }
 
 // Implementation of Tagname
@@ -121,6 +119,7 @@ impl ToString for TagName {
             Rectangle => "rect",
             Group => "g",
             Use => "use",
+            Animate => "animate",
         })
     }
 }
@@ -133,13 +132,30 @@ impl Element {
             tag_name,
             attributes: HashMap::new(),
             children: Vec::new(),
+            inner: None
         }
     }
 
     /// Appends an element to the children of the self element
     /// and consumes both whilst returning the product
-    pub fn append(mut self, child: Self) -> Self {
+    pub fn append(mut self, child: Element) -> Self {
         self.children.push(child);
+        self
+    }
+
+    fn is_allowed_inner(text: &str) -> bool {
+        let regular_expression = regex::Regex::new("[a-zA-Z0-9' \\-_\\/\\.!?:;(){}[\\]`~&,\"]+")
+            .unwrap();
+        regular_expression.is_match(text)
+    }
+
+    /// Sets the inner text to a plain string
+    /// Allowed characters are *a-zA-Z0-9'" -_/\.!?:;(){}[]`~&,*
+    pub fn set_inner(mut self, text: &str) -> Self {
+        if !Element::is_allowed_inner(text) {
+            return self;
+        }
+        self.inner = Some(String::from(text));
         self
     }
 
@@ -162,6 +178,11 @@ impl Element {
     /// Gets an immutable reference to the children of this Element
     pub fn get_children(&self) -> &Children {
         &self.children
+    }
+
+    /// Gets a clone of the inner text
+    pub fn get_inner(&self) -> &Option<String> {
+        &self.inner
     }
 }
 
