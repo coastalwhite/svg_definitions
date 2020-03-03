@@ -23,12 +23,10 @@ pub enum AttributeValue {
     Length(length::LengthProps),
     Integer(i32),
     Float(f32),
+    Percentage(f32),
 
     /// # NOTE
     /// Will be rounded to two decimal points
-    
-
-    // Percentage(f32),
 
     //URL(URLProps),
     // AttributeName(Attribute),
@@ -134,10 +132,11 @@ impl ToString for AttributeValue {
             Color(props) => props.to_string(),
             TColor(props) => props.to_string(),
             Integer(props) => props.to_string(),
-            Float(props) => format!("{:.2}", props),
+            Float(props) => prec_num(*props),
             Reference(props) => format!("#{}", props.to_string()),
             Length(props) => props.to_string(),
             PathDefinitionValue(props) => props.to_string(),
+            Percentage(props) => format!("{}%", prec_num(*props))
         }
     }
 }
@@ -152,10 +151,11 @@ impl Hash for AttributeValue {
             Color(props) => props.hash(state),
             TColor(props) => props.hash(state),
             Integer(props) => props.hash(state),
-            Float(props) => (prec_num(props.clone())).hash(state),
+            Float(props) => prec_num(*props).hash(state),
             Reference(props) => props.hash(state),
             Length(props) => props.hash(state),
             PathDefinitionValue(props) => props.hash(state),
+            Percentage(props) => format!("{}%", prec_num(*props)).hash(state),
         }
     }
 }
