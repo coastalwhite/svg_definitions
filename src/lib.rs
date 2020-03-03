@@ -27,9 +27,9 @@
 //!     .append(triangle);
 //! ```
 
+pub mod attribute_value;
 pub mod attributes;
-pub mod color;
-pub mod path;
+mod plain_string;
 pub mod prelude;
 
 pub type Point2D = (f64, f64);
@@ -38,7 +38,10 @@ use std::clone::Clone;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use attributes::{Attribute, AttributeValue};
+use attribute_value::AttributeValue;
+use attributes::Attribute;
+
+use plain_string::PlainStringProps;
 
 type Attributes = HashMap<Attribute, AttributeValue>;
 type Children = Vec<Element>;
@@ -53,6 +56,18 @@ pub enum TagName {
     Rectangle,
     Group,
     Use,
+    Animate,
+    AnimateMotion,
+    ClipPath,
+    Description,
+    PlainString(PlainStringProps),
+    Ellipse,
+    Link,
+    Line,
+    LineairGradiant,
+    Stop,
+
+    /// Left off at https://developer.mozilla.org/en-US/docs/Web/SVG/Element/marker
 }
 
 /// Element provides a way to simulate DOM SVG elements
