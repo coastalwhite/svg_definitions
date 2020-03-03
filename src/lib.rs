@@ -30,8 +30,9 @@
 pub mod attribute_value;
 pub mod attributes;
 pub mod prelude;
+mod util;
 
-pub type Point2D = (f64, f64);
+pub type Point2D = (f32, f32);
 
 use std::clone::Clone;
 use std::collections::HashMap;
@@ -89,7 +90,7 @@ pub enum TagName {
     Line,
 
     /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient)
-    LineairGradiant,
+    LinearGradiant,
 
     /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
     Stop,
@@ -98,7 +99,6 @@ pub enum TagName {
 }
 
 /// Element provides a way to simulate DOM SVG elements
-#[derive(Debug)]
 pub struct Element {
     tag_name: TagName,
     attributes: Attributes,
@@ -120,6 +120,14 @@ impl ToString for TagName {
             Group => "g",
             Use => "use",
             Animate => "animate",
+            AnimateMotion => "animateMotion",
+            ClipPath => "clipPath",
+            Description => "desc",
+            Ellipse => "ellipse",
+            Link => "a",
+            Line => "line",
+            LinearGradiant => "linearGradiant",
+            Stop => "stop"
         })
     }
 }

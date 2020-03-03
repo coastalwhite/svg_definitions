@@ -1,72 +1,66 @@
-pub mod animate;
-pub mod clip_reference;
 pub mod color;
 pub mod identifier;
 pub mod path;
-pub mod url;
-pub mod values;
 pub mod viewbox;
-pub mod transform_list;
+pub mod length;
 
 use std::hash::{Hash, Hasher};
 
 use crate::attributes::Attribute;
-use animate::*;
-use clip_reference::ClipReferenceProps;
+use crate::util::prec_num;
 use color::{Color, TColor};
 use identifier::IdentifierProps;
 use path::PathDefinitionString;
-use url::URLProps;
-use values::{ValueProps, ValuesProps};
 use viewbox::ViewBoxProps;
-use transform_list::TransformListProps;
 
 /// A value an Element Attribute may have
-#[derive(Debug)]
+#[derive(Clone)]
 pub enum AttributeValue {
     ViewBox(ViewBoxProps),
     Identifier(IdentifierProps),
     Color(Color),
     TColor(TColor),
+    Length(length::LengthProps),
     Integer(i32),
+    Float(f32),
 
     /// # NOTE
     /// Will be rounded to two decimal points
-    Float(f64),
+    
 
-    Percentage(f64),
+    // Percentage(f32),
 
-    URL(URLProps),
-    AttributeName(Attribute),
-    Values(ValuesProps),
+    //URL(URLProps),
+    // AttributeName(Attribute),
+    //Values(ValuesProps),
 
-    Duration(DurationProps),
-    Count(CountProps),
+    //Duration(DurationProps),
+    //Count(CountProps),
 
-    Value(ValueProps),
+    //Value(ValueProps),
 
-    Restart(RestartProps),
+    //Restart(RestartProps),
 
-    Additive(AdditiveProps),
-    Accumulative(AccumulativeProps),
+    // Additive(AdditiveProps),
+    // Accumulative(AccumulativeProps),
 
-    AnimateRotate(AnimateRotateProps),
+    // AnimateRotate(AnimateRotateProps),
 
-    KeySplines(KeySplinesProps),
+    // KeySplines(KeySplinesProps),
 
-    TransformList(TransformListProps),
+    // TransformList(TransformListProps),
 
-    GradiantUnit(GradiantUnitProps),
-    SpreadMethod(SpreadMethodProps),
-    StopColor(StopColorProps),
-    Opacity(OpacityProps)
+    // GradiantUnit(GradiantUnitProps),
+    // SpreadMethod(SpreadMethodProps),
+    // StopColor(StopColorProps),
+    // Opacity(OpacityProps)
 
 
-    Auto,
+    // Auto,
 
-    CalculationMode(CalculationModeProps),
+    // CalculationMode(CalculationModeProps),
 
-    ClipReference(ClipReferenceProps),
+    // ClipReference(ClipReferenceProps),
 
     Reference(IdentifierProps),
     PathDefinitionValue(PathDefinitionString),
@@ -110,7 +104,7 @@ impl AttributeValue {
     ///
     /// # Note
     /// For a shorthand look at: [From<f64>](#impl-From<f64>)
-    pub fn new_float(number: f64) -> AttributeValue {
+    pub fn new_float(number: f32) -> AttributeValue {
         AttributeValue::Float(number)
     }
 
@@ -130,23 +124,6 @@ impl AttributeValue {
     }
 }
 
-impl Clone for AttributeValue {
-    fn clone(&self) -> Self {
-        use AttributeValue::*;
-
-        match self {
-            ViewBox(props) => ViewBox(props.clone()),
-            Identifier(props) => Identifier(props.clone()),
-            Color(props) => Color(props.clone()),
-            TColor(props) => TColor(props.clone()),
-            Integer(props) => Integer(props.clone()),
-            Float(props) => Float(props.clone()),
-            Reference(props) => Reference(props.clone()),
-            PathDefinitionValue(props) => PathDefinitionValue(props.clone()),
-        }
-    }
-}
-
 impl ToString for AttributeValue {
     fn to_string(&self) -> String {
         use AttributeValue::*;
@@ -159,6 +136,7 @@ impl ToString for AttributeValue {
             Integer(props) => props.to_string(),
             Float(props) => format!("{:.2}", props),
             Reference(props) => format!("#{}", props.to_string()),
+            Length(props) => props.to_string(),
             PathDefinitionValue(props) => props.to_string(),
         }
     }
@@ -174,8 +152,9 @@ impl Hash for AttributeValue {
             Color(props) => props.hash(state),
             TColor(props) => props.hash(state),
             Integer(props) => props.hash(state),
-            Float(props) => (format!("{:.2}", props)).hash(state),
+            Float(props) => (prec_num(props.clone())).hash(state),
             Reference(props) => props.hash(state),
+            Length(props) => props.hash(state),
             PathDefinitionValue(props) => props.hash(state),
         }
     }
@@ -189,8 +168,8 @@ impl From<i32> for AttributeValue {
 }
 
 /// Shorthand to create [AttributeValue::Float]
-impl From<f64> for AttributeValue {
-    fn from(number: f64) -> AttributeValue {
+impl From<f32> for AttributeValue {
+    fn from(number: f32) -> AttributeValue {
         AttributeValue::Float(number)
     }
 }
