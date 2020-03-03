@@ -49,25 +49,55 @@ type Children = Vec<Element>;
 /// TagName provides tags for SVG creation
 #[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
 pub enum TagName {
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg)
     SVG,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs)
     Defs,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g)
     SVGPath,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle)
     Circle,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect)
     Rectangle,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g)
     Group,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use)
     Use,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate)
     Animate,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateMotion)
     AnimateMotion,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath)
     ClipPath,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/desc)
     Description,
-    PlainString(PlainStringProps),
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse)
     Ellipse,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/a)
     Link,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line)
     Line,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient)
     LineairGradiant,
+
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
     Stop,
 
-    /// Left off at https://developer.mozilla.org/en-US/docs/Web/SVG/Element/marker
+    // Left off at https://developer.mozilla.org/en-US/docs/Web/SVG/Element/marker
 }
 
 /// Element provides a way to simulate DOM SVG elements
