@@ -10,126 +10,48 @@
 //! ```
 //! use svg_definitions::prelude::*;
 //!
-//! let triangle = SVGElem::new(Tag::SVGPath)
-//!     .set(Attr::StrokeWidth, 1.into())
-//!     .set(Attr::StrokeColor, RGB::new(0,0,0).into())
-//!     .set(Attr::FillColor, RGBT::Transparent.into())
-//!     .set(Attr::PathDefinition, PathString::new()
+//! let triangle = SVGElem::new(Tag::Path)
+//!     .set(Attr::StrokeWidth, 1)
+//!     .set(Attr::Stroke, "#000")
+//!     .set(Attr::Fill, "transparent")
+//!     .set(Attr::D, PathData::new()
 //!         .move_to((0.0, 0.0))
 //!         .line_to((10.0, 0.0))
 //!         .line_to((0.0, 10.0))
 //!         .line_to((0.0, 0.0))
 //!         .close_path()
-//!         .into()
 //!     );
 //!
-//! let group = SVGElem::new(Tag::Group)
+//! let group = SVGElem::new(Tag::G)
 //!     .append(triangle);
 //! ```
 
-pub mod attribute_value;
-pub mod attributes;
 pub mod prelude;
-mod util;
+
+pub mod attributes;
+pub mod path;
+pub mod tag_name;
+
+#[cfg(feature="parser")]
+pub mod parser;
 
 pub type Point2D = (f32, f32);
 
-use std::clone::Clone;
 use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
 
-use attribute_value::AttributeValue;
 use attributes::Attribute;
+use tag_name::TagName;
 
-type Attributes = HashMap<Attribute, AttributeValue>;
+type Attributes = HashMap<Attribute, String>;
 type Children = Vec<Element>;
-
-/// TagName provides tags for SVG creation
-#[derive(Clone, Copy, PartialEq, Eq, Debug, Hash)]
-pub enum TagName {
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/svg)
-    SVG,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs)
-    Defs,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g)
-    SVGPath,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/circle)
-    Circle,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/rect)
-    Rectangle,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/g)
-    Group,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/use)
-    Use,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animate)
-    Animate,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/animateMotion)
-    AnimateMotion,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/clipPath)
-    ClipPath,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/desc)
-    Description,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/ellipse)
-    Ellipse,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/a)
-    Link,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/line)
-    Line,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient)
-    LinearGradiant,
-
-    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
-    Stop,
-
-    // Left off at https://developer.mozilla.org/en-US/docs/Web/SVG/Element/marker
-}
 
 /// Element provides a way to simulate DOM SVG elements
 pub struct Element {
     tag_name: TagName,
     attributes: Attributes,
     children: Children,
-    inner: Option<String>
-}
-
-// Implementation of Tagname
-impl ToString for TagName {
-    fn to_string(&self) -> String {
-        use TagName::*;
-
-        String::from(match self {
-            SVG => "svg",
-            Defs => "defs",
-            SVGPath => "path",
-            Circle => "circle",
-            Rectangle => "rect",
-            Group => "g",
-            Use => "use",
-            Animate => "animate",
-            AnimateMotion => "animateMotion",
-            ClipPath => "clipPath",
-            Description => "desc",
-            Ellipse => "ellipse",
-            Link => "a",
-            Line => "line",
-            LinearGradiant => "linearGradiant",
-            Stop => "stop"
-        })
-    }
+    inner: Option<String>,
 }
 
 // Implementation of Element
@@ -140,7 +62,7 @@ impl Element {
             tag_name,
             attributes: HashMap::new(),
             children: Vec::new(),
-            inner: None
+            inner: None,
         }
     }
 
@@ -152,8 +74,8 @@ impl Element {
     }
 
     fn is_allowed_inner(text: &str) -> bool {
-        let regular_expression = regex::Regex::new("[a-zA-Z0-9' \\-_\\/\\.!?:;(){}[\\]`~&,\"]+")
-            .unwrap();
+        let regular_expression =
+            regex::Regex::new("[a-zA-Z0-9' \\-_\\/\\.!?:;(){}[\\]`~&,\"]+").unwrap();
         regular_expression.is_match(text)
     }
 
@@ -168,8 +90,11 @@ impl Element {
     }
 
     /// Sets an attribute of the self element to a certain value
-    pub fn set(mut self, attribute: Attribute, value: AttributeValue) -> Self {
-        self.attributes.insert(attribute, value.clone());
+    pub fn set<T>(mut self, attribute: Attribute, value: T) -> Self
+    where
+        T: ToString,
+    {
+        self.attributes.insert(attribute, value.to_string());
         self
     }
 
@@ -215,5 +140,11 @@ impl Hash for Element {
             value.hash(state);
         });
         self.children.iter().for_each(|child| child.hash(state));
+    }
+}
+
+impl Into<Element> for TagName {
+    fn into(self) -> Element {
+        Element::new(self)
     }
 }

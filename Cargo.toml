@@ -13,3 +13,6 @@ readme = "./README.md"
 
 [dependencies]
 regex="1"
+
+[features]
+parser = []

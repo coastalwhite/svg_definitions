@@ -2,14 +2,14 @@
 //!
 //! # Note
 //! In the [crate::prelude](../prelude/index.html) the name for
-//! [PathDefinitionString](struct.PathDefinitionString.html) is [PathString](../prelude/index.html)
+//! [PathDefinitionString](struct.PathDefinitionString.html) is [PathData](../prelude/index.html)
 //!
 //! # Examples
 //! ## 1) Triangle
 //! ```
 //! use svg_definitions::prelude::*;
 //!
-//! let path_definition_string = PathString::new()
+//! let path_definition_string = PathData::new()
 //!     .move_to((0.0, 0.0))
 //!     .line_to((10.0, 0.0))
 //!     .line_to((0.0, 10.0))
@@ -21,7 +21,7 @@
 //! ```
 //! use svg_definitions::prelude::*;
 //!
-//! let path_definition_string = PathString::new()
+//! let path_definition_string = PathData::new()
 //!     .move_to((0.0, 0.0))
 //!     .r_line_to((10.0, 0.0))
 //!     .r_line_to((-10.0, 10.0))
@@ -33,7 +33,6 @@ use std::clone::Clone;
 use std::fmt;
 use std::hash::{Hash, Hasher};
 
-use crate::attribute_value::AttributeValue;
 use crate::Point2D;
 
 #[derive(Debug)]
@@ -61,7 +60,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .line_to((6.0, 6.0))
     ///     .close_path();
@@ -86,7 +85,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0));
     ///
     /// // Will output "M 3.00 3.00"
@@ -108,7 +107,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .line_to((10.0, 10.0));
     ///
@@ -131,7 +130,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .horizontal_line_to(10.0);
     ///
@@ -154,7 +153,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .vertical_line_to(10.0);
     ///
@@ -177,7 +176,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_line_to((7.0, 7.0));
     ///
@@ -200,7 +199,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_horizontal_line_to(7.0);
     ///
@@ -223,7 +222,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_vertical_line_to(7.0);
     ///
@@ -246,7 +245,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .curve_to((10.0, 10.0), (15.0, 20.0), (20.0, 25.0));
     ///
@@ -272,7 +271,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_curve_to((7.0, 7.0), (12.0, 17.0), (17.0, 22.0));
     ///
@@ -303,7 +302,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .curve_to((10.0, 10.0), (15.0, 20.0), (20.0, 25.0))
     ///     .smooth_curve_to((20.0, 20.0), (-5.0, -10.0));
@@ -331,7 +330,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_curve_to((10.0, 10.0), (15.0, 20.0), (20.0, 25.0))
     ///     .r_smooth_curve_to((20.0, 20.0), (-5.0, -10.0));
@@ -359,7 +358,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .quad_curve_to((10.0, 10.0), (15.0, 20.0));
     ///
@@ -386,7 +385,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_quad_curve_to((10.0, 10.0), (15.0, 20.0));
     ///
@@ -414,7 +413,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .quad_curve_to((10.0, 10.0), (15.0, 20.0))
     ///     .quad_string_to((20.0, 20.0));
@@ -440,7 +439,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((3.0, 3.0))
     ///     .r_quad_curve_to((10.0, 10.0), (15.0, 20.0))
     ///     .r_quad_string_to((20.0, 20.0));
@@ -464,7 +463,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((5.0, 5.0))
     ///     .arc_to((10.0, 10.0), (4.5, 8.0), 3.14, true, false);
     ///
@@ -501,7 +500,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((5.0, 5.0))
     ///     .r_arc_to((10.0, 10.0), (4.5, 8.0), 3.14, true, false);
     ///
@@ -538,7 +537,7 @@ impl PathDefinitionString {
     /// ```
     /// use svg_definitions::prelude::*;
     ///
-    /// let path_definition_string = PathString::new()
+    /// let path_definition_string = PathData::new()
     ///     .move_to((0.0, 0.0))
     ///     .line_to((10.0, 10.0))
     ///     .line_to((10.0, 0.0))
@@ -561,6 +560,12 @@ impl fmt::Display for PathDefinitionString {
     }
 }
 
+impl Into<String> for PathDefinitionString {
+    fn into(self) -> String {
+        self.to_string()
+    }
+}
+
 impl Clone for PathDefinitionString {
     fn clone(&self) -> PathDefinitionString {
         PathDefinitionString {
@@ -572,13 +577,6 @@ impl Clone for PathDefinitionString {
 impl Hash for PathDefinitionString {
     fn hash<T: Hasher>(&self, state: &mut T) {
         self.inner_string.hash(state)
-    }
-}
-
-/// Shorthand to create [AttributeValue::PathDefinitionValue]
-impl From<PathDefinitionString> for AttributeValue {
-    fn from(path_string: PathDefinitionString) -> AttributeValue {
-        AttributeValue::new_path_definition(path_string)
     }
 }
 
