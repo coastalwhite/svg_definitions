@@ -1,6 +1,6 @@
 [package]
 name = "svg_definitions"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Gijs Burghoorn <g.burghoorn@gmail.com>"]
 edition = "2018"
 description = "A Rust library with definitions for SVG elements"
@@ -13,7 +13,3 @@ readme = "./README.md"
 
 [dependencies]
 regex="1"
-svg = { version = "0.7.1", optional = true }
-
-[features]
-parser = ["svg"]
