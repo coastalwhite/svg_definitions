@@ -1,3 +1,5 @@
+pub mod internal_ratio;
+
 /// formats number to 2 points of precision
 pub fn prec_num(num: f32) -> String {
     format!("{:.2}", num)

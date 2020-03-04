@@ -3,6 +3,8 @@ pub mod identifier;
 pub mod path;
 pub mod viewbox;
 pub mod length;
+pub mod paint;
+pub mod opacity;
 
 use std::hash::{Hash, Hasher};
 
@@ -24,6 +26,7 @@ pub enum AttributeValue {
     Integer(i32),
     Float(f32),
     Percentage(f32),
+    Paint(PaintProps),
 
     /// # NOTE
     /// Will be rounded to two decimal points

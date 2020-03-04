@@ -49,6 +49,8 @@ pub enum Attribute {
     /// Best coupled with AttrValue::Length or AttrValue::Percentage 
     StrokeWidth,
 
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke)
+    /// Best coupled with AttrValue::Paint
     StrokeColor,
     FillColor,
     CenterX,

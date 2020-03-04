@@ -1,286 +1,151 @@
-//! Module containing the color object, and all it's logic
+//! Module containing the rgb and rgba object, and all it's logic
 
-use std::hash::{Hash, Hasher};
+use std::hash::Hash;
+use std::cmp::min;
 
-use crate::attribute_value::AttributeValue;
+use crate::util::internal_ratio::InternalRatio;
 
-/// Represents color
-#[derive(Debug, Eq, Copy)]
-pub struct Color {
+/// Represents rgb
+#[derive(Hash, PartialEq, Eq, Clone)]
+pub struct RGB {
     red: u8,
     green: u8,
     blue: u8,
 }
 
-/// Represents a color with can become transparent
-#[derive(Hash, Debug, Eq, Copy)]
-pub enum TColor {
-    RGB(Color),
-    Transparent,
+/// Represents rgb
+#[derive(Hash, PartialEq, Eq, Clone)]
+pub struct RGBA {
+    red: u8,
+    green: u8,
+    blue: u8,
+    alpha: InternalRatio,
 }
 
-// Implementation of Color
-impl Color {
-    /// Constructor for color
-    pub fn new(red: u8, green: u8, blue: u8) -> Color {
-        Color { red, green, blue }
-    }
+/// Represents hsl
+#[derive(Hash, PartialEq, Eq, Clone)]
+pub struct HSL {
+    hue: u16,
+    saturation: u16,
+    light: u16,
+}
 
-    /// Constructor for color from hex
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// // 6 character definition
-    /// let black_coral = Color::from_hex("565676");
-    ///
-    /// // 7 character definition
-    /// let pale_lavender = Color::from_hex("#d8dcff");
-    ///
-    /// // Generated with https://coolors.co/
-    /// ```
-    pub fn from_hex(input_string: &str) -> Option<Color> {
-        // Invalid hex length
-        if input_string.len() < 6 || input_string.len() > 7 {
-            return None;
-        }
+/// Represents hsla
+#[derive(Hash, PartialEq, Eq, Clone)]
+pub struct HSLA {
+    hue: u16,
+    saturation: u16,
+    light: u16,
+    alpha: InternalRatio,
+}
 
-        // Invalid 7 character hex string
-        if input_string.len() == 7 && input_string.as_bytes()[0] != b'#' {
-            return None;
-        }
+#[derive(Hash, PartialEq, Eq, Clone)]
+pub struct HexColor {
+    red: u8,
+    green: u8,
+    blue: u8
+}
 
-        // Get purely the numbers
-        let hex_string: &str = match input_string.len() {
-            7 => &input_string[1..],
-            _ => &input_string[..],
-        };
-
-        let red_result = u8::from_str_radix(&hex_string[..2], 16);
-        let green_result = u8::from_str_radix(&hex_string[2..4], 16);
-        let blue_result = u8::from_str_radix(&hex_string[4..], 16);
-
-        match (red_result, green_result, blue_result) {
-            (Ok(red), Ok(green), Ok(blue)) => Some(Color::new(red, green, blue)),
-            _ => None,
-        }
-    }
-
-    /// Returns the red component of the color
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.r()); // 172
-    /// ```
-    pub fn r(&self) -> u8 {
-        self.red
-    }
-
-    /// Returns the red component of the color
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.red()); // 172
-    /// ```
-    pub fn red(&self) -> u8 {
-        self.red
-    }
-
-    /// Returns the green component of the color
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.g()); // 159
-    /// ```
-    pub fn g(&self) -> u8 {
-        self.green
-    }
-
-    /// Returns the green component of the color
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.green()); // 159
-    /// ```
-    pub fn green(&self) -> u8 {
-        self.green
-    }
-
-    /// Returns the blue component of the color
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.b()); // 187
-    /// ```
-    pub fn b(&self) -> u8 {
-        self.blue
-    }
-
-    /// Returns the blue component of the color
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.blue()); // 187
-    /// ```
-    pub fn blue(&self) -> u8 {
-        self.blue
-    }
-
-    /// Returns a tuple with red, green and blue, respectively
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{:?}", pastel_purple.rgb()); // (172, 159, 187)
-    /// ```
-    pub fn rgb(&self) -> (u8, u8, u8) {
-        (self.r(), self.g(), self.b())
-    }
-
-    /// Returns a string a string containing the u8 variant of the colors
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.to_rgb_string()); // rgb(172, 159, 187)
-    /// ```
-    pub fn to_rgb_string(&self) -> String {
-        format!("rgb({}, {}, {})", self.r(), self.g(), self.b())
-    }
-
-    /// Returns a string a string containing the hex variant of the colors
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// # use svg_definitions::color::Color;
-    /// let pastel_purple = Color::new(172, 159, 187);
-    ///
-    /// println!("{}", pastel_purple.to_hex_string()); // #ac9fbb
-    /// ```
-    pub fn to_hex_string(&self) -> String {
-        let red_hex = format!("{:02x}", self.r());
-        let green_hex = format!("{:02x}", self.g());
-        let blue_hex = format!("{:02x}", self.b());
-
-        format!("#{}{}{}", red_hex, green_hex, blue_hex)
+impl RGB {
+    pub fn new(red: u8, green: u8, blue: u8) -> RGB {
+        RGB { red, green, blue }
     }
 }
 
-impl std::fmt::Display for Color {
+impl std::fmt::Display for RGB {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.to_hex_string())
+        write!(f, "rgb({},{},{})", self.red, self.green, self.blue)
     }
 }
 
-impl PartialEq for Color {
-    fn eq(&self, other: &Self) -> bool {
-        self.r() == other.r() && self.g() == other.g() && self.b() == other.b()
+impl RGBA {
+    pub fn new(red: u8, green: u8, blue: u8, alpha: InternalRatio) -> RGBA {
+        RGBA { red, green, blue, alpha }
     }
 }
 
-impl Clone for Color {
-    fn clone(&self) -> Self {
-        Self::new(self.r(), self.g(), self.b())
+impl std::fmt::Display for RGBA {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "rgba({},{},{},{})", self.red, self.green, self.blue, self.alpha)
     }
 }
 
-impl Hash for Color {
-    fn hash<T: Hasher>(&self, state: &mut T) {
-        self.red.hash(state);
-        self.green.hash(state);
-        self.blue.hash(state);
-    }
-}
-
-// Implementation of TColor
-impl TColor {
-    /// Returns either the hex of 'color' or "transparent" for Color(color) and Transparent, respectively
-    pub fn to_string(&self) -> String {
-        match self {
-            TColor::RGB(color) => color.to_hex_string(),
-            TColor::Transparent => String::from("transparent"),
+impl HSL {
+    pub fn new(hue: u16, saturation: u16, light: u16) -> HSL {
+        HSL {
+            hue: min(hue, 360),
+            saturation: min(saturation, 360),
+            light: min(light, 360)
         }
     }
 }
 
-impl PartialEq for TColor {
-    fn eq(&self, other: &Self) -> bool {
-        match (self, other) {
-            (TColor::Transparent, TColor::Transparent) => true,
-            (TColor::RGB(color1), TColor::RGB(color2)) => color1 == color2,
-            _ => false,
+impl std::fmt::Display for HSL {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "hsl({},{},{})", self.hue, self.saturation, self.light)
+    }
+}
+
+impl HSLA {
+    pub fn new(hue: u16, saturation: u16, light: u16, alpha: InternalRatio) -> HSLA {
+        HSLA {
+            hue: min(hue, 360),
+            saturation: min(saturation, 360),
+            light: min(light, 360),
+            alpha,
         }
     }
 }
 
-impl Clone for TColor {
-    fn clone(&self) -> Self {
-        match self {
-            TColor::Transparent => TColor::Transparent,
-            TColor::RGB(color) => TColor::RGB(color.clone()),
+impl std::fmt::Display for HSLA {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "hsla({},{},{},{})", self.hue, self.saturation, self.light, self.alpha)
+    }
+}
+
+impl HexColor {
+    pub fn new(string: &str) -> Result<HexColor,()> {
+        let bytes = string.as_bytes();
+
+        if bytes.len() != 4 && bytes.len() != 7 {
+            return Err(());
         }
+
+        if bytes[0] != b'#' {
+            return Err(());
+        }
+
+        let red_str;
+        let green_str;
+        let blue_str;
+
+        if bytes.len() == 4 {
+            red_str = &string[1..1];
+            green_str = &string[2..2];
+            blue_str = &string[3..3];
+        } else {
+            red_str = &string[1..2];
+            green_str = &string[3..4];
+            blue_str = &string[5..6];
+        }
+
+        let red = u8::from_str_radix(red_str, 16).map_err(|_| ())?;
+        let green = u8::from_str_radix(green_str, 16).map_err(|_| ())?;
+        let blue = u8::from_str_radix(blue_str, 16).map_err(|_| ())?;
+
+        Ok(
+            HexColor {
+                red,
+                green,
+                blue
+            }
+        )
     }
 }
 
-/// Some useful default colors
-pub mod default {
-    use super::Color;
-
-    pub const BLACK: Color = Color {
-        red: 0,
-        green: 0,
-        blue: 0,
-    };
-    pub const WHITE: Color = Color {
-        red: 255,
-        green: 255,
-        blue: 255,
-    };
-}
-
-/// Shorthand to create [AttributeValue::Color]
-impl From<Color> for AttributeValue {
-    fn from(color: Color) -> AttributeValue {
-        AttributeValue::Color(color)
-    }
-}
-
-/// Shorthand to create [AttributeValue::TColor]
-impl From<TColor> for AttributeValue {
-    fn from(color: TColor) -> AttributeValue {
-        AttributeValue::TColor(color)
+impl std::fmt::Display for HexColor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "#{:2x}{:2x}{:2x}", self.red, self.green, self.blue)
     }
 }
 
@@ -289,89 +154,20 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_from_hex() {
-        let color_option = Color::from_hex("f7ebec");
-
-        match color_option {
-            Some(color) => assert_eq!(color.rgb(), (247, 235, 236)),
-            None => assert!(false),
-        }
-
-        let color_option = Color::from_hex("#f7ebec");
-
-        match color_option {
-            Some(color) => assert_eq!(color.rgb(), (247, 235, 236)),
-            None => assert!(false),
-        }
-
-        let color_option = Color::from_hex("000000");
-
-        match color_option {
-            Some(color) => assert_eq!(color.rgb(), (0, 0, 0)),
-            None => assert!(false),
-        }
-
-        let color_option = Color::from_hex("ffffff");
-
-        match color_option {
-            Some(color) => assert_eq!(color.rgb(), (255, 255, 255)),
-            None => assert!(false),
-        }
-
-        let color_option = Color::from_hex("a");
-        assert_eq!(color_option, None);
-
-        let color_option = Color::from_hex("abcdefg");
-        assert_eq!(color_option, None);
-
-        let color_option = Color::from_hex("abcdefgh");
-        assert_eq!(color_option, None);
-
-        let color_option = Color::from_hex("#bcdefgh");
-        assert_eq!(color_option, None);
-
-        let color_option = Color::from_hex("#12345z");
-        assert_eq!(color_option, None);
-
-        let color_option = Color::from_hex("#123z56");
-        assert_eq!(color_option, None);
-
-        let color_option = Color::from_hex("#1z3456");
-        assert_eq!(color_option, None);
+    fn rgb_test() {
+        assert_eq!(RGB::new(1, 2, 3).to_string(), String::from("rgb(1,2,3)"));
+        assert_eq!(RGB::new(3, 2, 1).to_string(), String::from("rgb(3,2,1)"));
     }
 
     #[test]
-    fn test_to_rgb_string() {
-        let color = Color::new(247, 235, 236);
-        assert_eq!(color.to_rgb_string(), "rgb(247, 235, 236)");
-
-        let color = Color::new(0, 0, 0);
-        assert_eq!(color.to_rgb_string(), "rgb(0, 0, 0)");
-
-        let color = Color::new(255, 255, 255);
-        assert_eq!(color.to_rgb_string(), "rgb(255, 255, 255)");
+    fn rgba_test() {
+        assert_eq!(RGBA::new(1, 2, 3, 0.1.into()).to_string(), String::from("rgba(1,2,3,0.1000)"));
+        assert_eq!(RGBA::new(3, 2, 1, 0.6.into()).to_string(), String::from("rgba(3,2,1,0.6000)"));
     }
 
     #[test]
-    fn test_to_hex_string() {
-        let color = Color::new(247, 235, 236);
-        assert_eq!(color.to_hex_string(), "#f7ebec");
-
-        let color = Color::new(0, 0, 0);
-        assert_eq!(color.to_hex_string(), "#000000");
-
-        let color = Color::new(255, 255, 255);
-        assert_eq!(color.to_hex_string(), "#ffffff");
-    }
-
-    #[test]
-    fn test_eq() {
-        let color1 = Color::new(247, 235, 236);
-        assert_eq!(color1, color1);
-        let color2 = Color::new(247, 235, 236);
-        assert_eq!(color1, color2);
-
-        let color1 = Color::new(0, 0, 0);
-        assert_ne!(color1, color2);
+    fn hsl_test() {
+        assert_eq!(RGBA::new(1, 2, 3).to_string(), String::from("hsl(1,2,3)"));
+        assert_eq!(RGBA::new(361, 2, 1).to_string(), String::from("hsl(360,2,1)"));
     }
 }
