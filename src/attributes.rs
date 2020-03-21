@@ -41,7 +41,7 @@ use std::convert::From;
 use std::hash::Hash;
 
 /// An attribute to an Element
-#[derive(PartialEq, Eq, Debug, Clone, Copy, Hash)]
+#[derive(PartialEq, Eq, Debug, Clone, Hash)]
 pub enum Attribute {
     /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/accent-height)
     AccentHeight,
@@ -801,6 +801,9 @@ pub enum Attribute {
 
     /// No MDN Documentation available for this attribute
     ZoomAndPan,
+
+    /// For all attributes which are not direct svg attributes
+    UnmappedAttribute(String),
 }
 
 // Implementation of Attribute
@@ -1062,6 +1065,7 @@ impl ToString for Attribute {
             YChannelSelector => "yChannelSelector",
             Z => "z",
             ZoomAndPan => "zoomAndPan",
+            UnmappedAttribute(attr) => &attr[..],
         })
     }
 }

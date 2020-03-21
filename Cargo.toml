@@ -16,4 +16,4 @@ regex="1"
 roxmltree = { version="0.10.0", optional=true }
 
 [features]
-parser = ["roxmltree"]
+parsing = ["roxmltree"]

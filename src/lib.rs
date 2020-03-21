@@ -47,6 +47,7 @@ type Attributes = HashMap<Attribute, String>;
 type Children = Vec<Element>;
 
 /// Element provides a way to simulate DOM SVG elements
+#[derive(Debug)]
 pub struct Element {
     tag_name: TagName,
     attributes: Attributes,
@@ -75,7 +76,7 @@ impl Element {
 
     fn is_allowed_inner(text: &str) -> bool {
         let regular_expression =
-            regex::Regex::new("[a-zA-Z0-9' \\-_\\/\\.!?:;(){}[\\]`~&,\"]+").unwrap();
+            regex::Regex::new(r#"[a-zA-Z0-9' \\-_/.!?:;(){}[\\]`~&,"]+"#).unwrap();
         regular_expression.is_match(text)
     }
 
@@ -85,7 +86,7 @@ impl Element {
         if !Element::is_allowed_inner(text) {
             return self;
         }
-        self.inner = Some(String::from(text));
+        self.inner = Some(String::from(String::from(text).trim()));
         self
     }
 
@@ -123,7 +124,7 @@ impl Clone for Element {
     fn clone(&self) -> Self {
         let mut elem = Element::new(self.tag_name);
         for (key, value) in self.attributes.iter() {
-            elem.attributes.insert(*key, value.clone());
+            elem.attributes.insert(key.clone(), value.clone());
         }
         for child in self.children.iter() {
             elem = elem.append(child.clone());
