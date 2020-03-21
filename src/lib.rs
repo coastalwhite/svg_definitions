@@ -25,6 +25,26 @@
 //! let group = SVGElem::new(Tag::G)
 //!     .append(triangle);
 //! ```
+//!
+//! ## Getting a svg from a file
+//! *The feature "parsing" needs to be enabled for this*
+//! ```
+//! use svg_definitions::prelude::*;
+//!
+//! let shape = SVGParseFile("/path/to/file.svg");
+//!
+//! // ...
+//! ```
+//!
+//! ## Getting a svg from text
+//! *The feature "parsing" needs to be enabled for this*
+//! ```
+//! use svg_definitions::prelude::*;
+//!
+//! let rect = SVGParseText("<rect width=\"50px\" height=\"50\" fill=\"black\" />");
+//!
+//! // ...
+//! ```
 
 pub mod prelude;
 

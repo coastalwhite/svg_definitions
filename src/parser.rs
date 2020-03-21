@@ -1,3 +1,29 @@
+//! Parser module, enabled with "parsing" feature
+//!
+//! This module provides the possibility to parse svg files.
+//!
+//! # Examples
+//! ## Getting a svg from a file
+//! *The feature "parsing" needs to be enabled for this*
+//! ```
+//! use svg_definitions::prelude::*;
+//!
+//! let shape = SVGParseFile("/path/to/file.svg");
+//!
+//! // ...
+//! ```
+//!
+//! ## Getting a svg from text
+//! *The feature "parsing" needs to be enabled for this*
+//! ```
+//! use svg_definitions::prelude::*;
+//!
+//! let rect = SVGParseText("<rect width=\"50px\" height=\"50\" fill=\"black\" />");
+//!
+//! // ...
+//! ```
+
+/// The error enum used when parsing
 #[derive(Debug)]
 pub enum ParseError {
     RoxmltreeError(roxmltree::Error),
@@ -385,11 +411,33 @@ fn node_to_element(root: roxmltree::Node) -> Result<Option<crate::Element>, Pars
     Ok(Some(element))
 }
 
+/// Parsing from a pure string
+///
+/// ## Getting a svg from text
+/// *The feature "parsing" needs to be enabled for this*
+/// ```
+/// use svg_definitions::prelude::*;
+///
+/// let rect = SVGParseText("<rect width=\"50px\" height=\"50\" fill=\"black\" />");
+///
+/// // ...
+/// ```
 pub fn parse_text(xml: &str) -> Result<crate::Element, ParseError> {
     let doc = roxmltree::Document::parse(xml).map_err(|err| ParseError::RoxmltreeError(err))?;
     return node_to_element(doc.root_element())?.ok_or(ParseError::NoElement);
 }
 
+/// Parsing from a svg file
+///
+/// ## Getting a svg from a file
+/// *The feature "parsing" needs to be enabled for this*
+/// ```
+/// use svg_definitions::prelude::*;
+///
+/// let shape = SVGParseFile("/path/to/file.svg");
+///
+/// // ...
+/// ```
 pub fn parse_file(path: &str) -> Result<crate::Element, ParseError> {
     let string = std::fs::read_to_string(path).map_err(|err| ParseError::FileError(err))?;
     return parse_text(&string[..]);
