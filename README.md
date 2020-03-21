@@ -11,19 +11,18 @@ I am open to pull requests so please contribute!
 ```
 use svg_definitions::prelude::*;
 
-let triangle = SVGElem::new(Tag::SVGPath)
-    .set(Attr::StrokeWidth, 1.into())
-    .set(Attr::StrokeColor, RGB::new(0,0,0).into())
-    .set(Attr::FillColor, RGBT::Transparent.into())
-    .set(Attr::PathDefinition, PathString::new()
+let triangle = SVGElem::new(Tag::Path)
+    .set(Attr::StrokeWidth, 1)
+    .set(Attr::Stroke, "#000")
+    .set(Attr::Fill, "transparent")
+    .set(Attr::D, PathData::new()
         .move_to((0.0, 0.0))
         .line_to((10.0, 0.0))
         .line_to((0.0, 10.0))
         .line_to((0.0, 0.0))
         .close_path()
-        .into()
     );
 
-let group = SVGElem::new(Tag::Group)
+let group = SVGElem::new(Tag::G)
     .append(triangle);
 ```

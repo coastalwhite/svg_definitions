@@ -32,6 +32,9 @@ pub mod attributes;
 pub mod path;
 pub mod tag_name;
 
+#[cfg(feature = "parsing")]
+pub mod parser;
+
 pub type Point2D = (f32, f32);
 
 use std::collections::HashMap;
