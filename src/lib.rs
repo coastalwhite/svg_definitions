@@ -149,6 +149,9 @@ impl Clone for Element {
         for child in self.children.iter() {
             elem = elem.append(child.clone());
         }
+        if let Some(inr) = &self.inner {
+            elem.inner = Some(inr.to_owned());
+        }
         elem
     }
 }
