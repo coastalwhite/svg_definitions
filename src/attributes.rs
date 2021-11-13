@@ -550,6 +550,9 @@ pub enum Attribute {
     /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/rx)
     Rx,
 
+    /// [MDN Documentation](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/ry)
+    Ry,
+
     /// No MDN Documentation available for this attribute
     Slope,
 
@@ -984,6 +987,7 @@ impl ToString for Attribute {
             Result => "result",
             Rotate => "rotate",
             Rx => "rx",
+            Ry => "ry",
             Slope => "slope",
             Spacing => "spacing",
             SpecularConstant => "specularConstant",
