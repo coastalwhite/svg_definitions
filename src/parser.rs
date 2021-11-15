@@ -286,6 +286,8 @@ fn string_to_attribute(string: &str) -> crate::attributes::Attribute {
         "restart" => Restart,
         "result" => Result,
         "rotate" => Rotate,
+        "rx" => Rx,
+        "ry" => Ry,
         "slope" => Slope,
         "spacing" => Spacing,
         "specularConstant" => SpecularConstant,
