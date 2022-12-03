@@ -89,11 +89,13 @@ impl Element {
 
     /// Appends an element to the children of the self element
     /// and consumes both whilst returning the product
+    #[inline]
     pub fn append(mut self, child: Element) -> Self {
         self.children.push(child);
         self
     }
 
+    #[inline]
     fn is_allowed_inner(text: &str) -> bool {
         let allowed_chars = r#"' \-_/.!?:;(){}[]`~&,""#;
 
@@ -103,6 +105,7 @@ impl Element {
 
     /// Sets the inner text to a plain string
     /// Allowed characters are *a-zA-Z0-9'" -_/\.!?:;(){}[]`~&,*
+    #[inline]
     pub fn set_inner(mut self, text: &str) -> Self {
         if !Element::is_allowed_inner(text) {
             return self;
@@ -112,6 +115,7 @@ impl Element {
     }
 
     /// Sets an attribute of the self element to a certain value
+    #[inline]
     pub fn set<T>(mut self, attribute: Attribute, value: T) -> Self
     where
         T: ToString,
@@ -121,21 +125,25 @@ impl Element {
     }
 
     /// Gets an immutable reference to the tag_name of this Element
+    #[inline]
     pub fn get_tag_name(&self) -> &TagName {
         &self.tag_name
     }
 
     /// Gets an immutable reference to the attributes of this Element
+    #[inline]
     pub fn get_attributes(&self) -> &Attributes {
         &self.attributes
     }
 
     /// Gets an immutable reference to the children of this Element
+    #[inline]
     pub fn get_children(&self) -> &Children {
         &self.children
     }
 
     /// Gets a clone of the inner text
+    #[inline]
     pub fn get_inner(&self) -> &Option<String> {
         &self.inner
     }

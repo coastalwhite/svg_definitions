@@ -45,6 +45,7 @@ impl PathDefinitionString {
     ///
     /// # Note
     /// Eventhough, one can input f64's the actual output string will always output number with 2 decimals points.
+    #[inline]
     pub fn new() -> PathDefinitionString {
         PathDefinitionString {
             inner_string: String::from(""),
@@ -72,6 +73,7 @@ impl PathDefinitionString {
     /// # assert!(eq_2);
     /// # assert_eq!(eq_1, eq_2);
     /// ```
+    #[inline]
     pub fn is_str(&self, eq: &str) -> bool {
         self.inner_string.trim_start() == eq
     }
@@ -92,6 +94,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00"));
     /// ```
+    #[inline]
     pub fn move_to(self, (x, y): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!("{} M {:.2} {:.2}", self.inner_string, x, y),
@@ -115,6 +118,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 L 10.00 10.00"));
     /// ```
+    #[inline]
     pub fn line_to(self, (x, y): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!("{} L {:.2} {:.2}", self.inner_string, x, y),
@@ -138,6 +142,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 H 10.00"));
     /// ```
+    #[inline]
     pub fn horizontal_line_to(self, x: f64) -> Self {
         PathDefinitionString {
             inner_string: format!("{} H {:.2}", self.inner_string, x),
@@ -161,6 +166,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 V 10.00"));
     /// ```
+    #[inline]
     pub fn vertical_line_to(self, y: f64) -> Self {
         PathDefinitionString {
             inner_string: format!("{} V {:.2}", self.inner_string, y),
@@ -184,6 +190,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 l 7.00 7.00"));
     /// ```
+    #[inline]
     pub fn r_line_to(self, (dx, dy): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!("{} l {:.2} {:.2}", self.inner_string, dx, dy),
@@ -207,6 +214,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 h 7.00"));
     /// ```
+    #[inline]
     pub fn r_horizontal_line_to(self, dx: f64) -> Self {
         PathDefinitionString {
             inner_string: format!("{} h {:.2}", self.inner_string, dx),
@@ -230,6 +238,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 v 7.00"));
     /// ```
+    #[inline]
     pub fn r_vertical_line_to(self, dy: f64) -> Self {
         PathDefinitionString {
             inner_string: format!("{} v {:.2}", self.inner_string, dy),
@@ -253,6 +262,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 C 15.00 20.00, 20.00 25.00, 10.00 10.00"));
     /// ```
+    #[inline]
     pub fn curve_to(self, (x, y): Point2D, (cx1, cy1): Point2D, (cx2, cy2): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!(
@@ -279,6 +289,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 c 12.00 17.00, 17.00 22.00, 7.00 7.00"));
     /// ```
+    #[inline]
     pub fn r_curve_to(
         self,
         (dx, dy): Point2D,
@@ -311,6 +322,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 C 15.00 20.00, 20.00 25.00, 10.00 10.00 S -5.00 -10.00, 20.00 20.00"));
     /// ```
+    #[inline]
     pub fn smooth_curve_to(self, (x, y): Point2D, (cx2, cy2): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!(
@@ -339,6 +351,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 c 15.00 20.00, 20.00 25.00, 10.00 10.00 s -5.00 -10.00, 20.00 20.00"));
     /// ```
+    #[inline]
     pub fn r_smooth_curve_to(self, (dx, dy): Point2D, (cdx2, cdy2): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!(
@@ -366,6 +379,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 Q 15.00 20.00, 10.00 10.00"));
     /// ```
+    #[inline]
     pub fn quad_curve_to(self, (x, y): Point2D, (cx1, cy1): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!(
@@ -393,6 +407,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 q 15.00 20.00, 10.00 10.00"));
     /// ```
+    #[inline]
     pub fn r_quad_curve_to(self, (dx, dy): Point2D, (cdx1, cdy1): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!(
@@ -422,6 +437,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 Q 15.00 20.00, 10.00 10.00 T 20.00 20.00"));
     /// ```
+    #[inline]
     pub fn quad_string_to(self, (x, y): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!("{} T {:.2} {:.2}", self.inner_string, x, y),
@@ -448,6 +464,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 q 15.00 20.00, 10.00 10.00 t 20.00 20.00"));
     /// ```
+    #[inline]
     pub fn r_quad_string_to(self, (dx, dy): Point2D) -> Self {
         PathDefinitionString {
             inner_string: format!("{} t {:.2} {:.2}", self.inner_string, dx, dy),
@@ -471,6 +488,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 5.00 5.00 A 4.50 8.00 3.14 1 0 10.00 10.00"));
     /// ```
+    #[inline]
     pub fn arc_to(
         self,
         (x, y): Point2D,
@@ -508,6 +526,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 5.00 5.00 a 4.50 8.00 3.14 1 0 10.00 10.00"));
     /// ```
+    #[inline]
     pub fn r_arc_to(
         self,
         (dx, dy): Point2D,
@@ -547,6 +566,7 @@ impl PathDefinitionString {
     /// println!("{}", path_definition_string);
     /// # assert!(path_definition_string.is_str("M 0.00 0.00 L 10.00 10.00 L 10.00 0.00 Z"));
     /// ```
+    #[inline]
     pub fn close_path(self) -> Self {
         PathDefinitionString {
             inner_string: format!("{} Z", self.inner_string),
@@ -561,6 +581,7 @@ impl fmt::Display for PathDefinitionString {
 }
 
 impl Into<String> for PathDefinitionString {
+    #[inline]
     fn into(self) -> String {
         self.to_string()
     }
