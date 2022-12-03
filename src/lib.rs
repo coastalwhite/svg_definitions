@@ -75,6 +75,13 @@ pub struct Element {
     inner: Option<String>,
 }
 
+fn is_allowed_inner(character: char) -> bool {
+    const NON_ALPHANUMERIC_ALLOWED_CHARACTERS: &'static str = r#"' \-_/.!?:;(){}[]`~&,""#;
+
+    return character.is_ascii_alphanumeric()
+        || NON_ALPHANUMERIC_ALLOWED_CHARACTERS.contains(character);
+}
+
 // Implementation of Element
 impl Element {
     /// Creates a new Element with a certain tag_name
@@ -95,21 +102,14 @@ impl Element {
         self
     }
 
-    #[inline]
-    fn is_allowed_inner(text: &str) -> bool {
-        let allowed_chars = r#"' \-_/.!?:;(){}[]`~&,""#;
-
-        text.chars()
-            .all(|c| c.is_ascii_alphanumeric() || allowed_chars.contains(c))
-    }
-
     /// Sets the inner text to a plain string
     /// Allowed characters are *a-zA-Z0-9'" -_/\.!?:;(){}[]`~&,*
     #[inline]
     pub fn set_inner(mut self, text: &str) -> Self {
-        if !Element::is_allowed_inner(text) {
+        if !text.chars().all(is_allowed_inner) {
             return self;
         }
+
         self.inner = Some(String::from(String::from(text).trim()));
         self
     }
