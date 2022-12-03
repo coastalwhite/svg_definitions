@@ -95,10 +95,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00"));
     /// ```
     #[inline]
-    pub fn move_to(self, (x, y): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} M {:.2} {:.2}", self.inner_string, x, y),
-        }
+    pub fn move_to(mut self, (x, y): Point2D) -> Self {
+        self.inner_string.push_str(&format!(" M {:.2} {:.2}", x, y));
+        self
     }
 
     /// Appends a line to a certain point to the [PathDefinitionString]
@@ -119,10 +118,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 L 10.00 10.00"));
     /// ```
     #[inline]
-    pub fn line_to(self, (x, y): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} L {:.2} {:.2}", self.inner_string, x, y),
-        }
+    pub fn line_to(mut self, (x, y): Point2D) -> Self {
+        self.inner_string.push_str(&format!(" L {:.2} {:.2}", x, y));
+        self
     }
 
     /// Appends a horizontal line to a certain x-value to the [PathDefinitionString]
@@ -143,10 +141,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 H 10.00"));
     /// ```
     #[inline]
-    pub fn horizontal_line_to(self, x: f64) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} H {:.2}", self.inner_string, x),
-        }
+    pub fn horizontal_line_to(mut self, x: f64) -> Self {
+        self.inner_string.push_str(&format!(" H {:.2}", x));
+        self
     }
 
     /// Appends a vertical line to a certain y-value to the [PathDefinitionString]
@@ -167,10 +164,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 V 10.00"));
     /// ```
     #[inline]
-    pub fn vertical_line_to(self, y: f64) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} V {:.2}", self.inner_string, y),
-        }
+    pub fn vertical_line_to(mut self, y: f64) -> Self {
+        self.inner_string.push_str(&format!(" V {:.2}", y));
+        self
     }
 
     /// Appends a line to a certain point relative to where the last action ended to the [PathDefinitionString]
@@ -191,10 +187,10 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 l 7.00 7.00"));
     /// ```
     #[inline]
-    pub fn r_line_to(self, (dx, dy): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} l {:.2} {:.2}", self.inner_string, dx, dy),
-        }
+    pub fn r_line_to(mut self, (dx, dy): Point2D) -> Self {
+        self.inner_string
+            .push_str(&format!(" l {:.2} {:.2}", dx, dy));
+        self
     }
 
     /// Appends a horizontal line to a certain x-value relative to where the last action ended to the [PathDefinitionString]
@@ -215,10 +211,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 h 7.00"));
     /// ```
     #[inline]
-    pub fn r_horizontal_line_to(self, dx: f64) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} h {:.2}", self.inner_string, dx),
-        }
+    pub fn r_horizontal_line_to(mut self, dx: f64) -> Self {
+        self.inner_string.push_str(&format!(" h {:.2}", dx));
+        self
     }
 
     /// Appends a vertical line to a certain y-value relative to where the last action ended to the [PathDefinitionString]
@@ -239,10 +234,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 v 7.00"));
     /// ```
     #[inline]
-    pub fn r_vertical_line_to(self, dy: f64) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} v {:.2}", self.inner_string, dy),
-        }
+    pub fn r_vertical_line_to(mut self, dy: f64) -> Self {
+        self.inner_string.push_str(&format!(" v {:.2}", dy));
+        self
     }
 
     /// Appends a curve to a certain point to the [PathDefinitionString], using control point 1 & 2
@@ -263,13 +257,12 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 C 15.00 20.00, 20.00 25.00, 10.00 10.00"));
     /// ```
     #[inline]
-    pub fn curve_to(self, (x, y): Point2D, (cx1, cy1): Point2D, (cx2, cy2): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!(
-                "{} C {:.2} {:.2}, {:.2} {:.2}, {:.2} {:.2}",
-                self.inner_string, cx1, cy1, cx2, cy2, x, y
-            ),
-        }
+    pub fn curve_to(mut self, (x, y): Point2D, (cx1, cy1): Point2D, (cx2, cy2): Point2D) -> Self {
+        self.inner_string.push_str(&format!(
+            " C {:.2} {:.2}, {:.2} {:.2}, {:.2} {:.2}",
+            cx1, cy1, cx2, cy2, x, y
+        ));
+        self
     }
 
     /// Appends a curve to a certain point relative to where the last action ended to the [PathDefinitionString], using control point 1 & 2
@@ -291,17 +284,16 @@ impl PathDefinitionString {
     /// ```
     #[inline]
     pub fn r_curve_to(
-        self,
+        mut self,
         (dx, dy): Point2D,
         (cdx1, cdy1): Point2D,
         (cdx2, cdy2): Point2D,
     ) -> Self {
-        PathDefinitionString {
-            inner_string: format!(
-                "{} c {:.2} {:.2}, {:.2} {:.2}, {:.2} {:.2}",
-                self.inner_string, cdx1, cdy1, cdx2, cdy2, dx, dy
-            ),
-        }
+        self.inner_string.push_str(&format!(
+            " c {:.2} {:.2}, {:.2} {:.2}, {:.2} {:.2}",
+            cdx1, cdy1, cdx2, cdy2, dx, dy
+        ));
+        self
     }
 
     /// Appends a smooth curve (following a normal curve) to a certain point to the [PathDefinitionString], using control point 2
@@ -323,13 +315,10 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 C 15.00 20.00, 20.00 25.00, 10.00 10.00 S -5.00 -10.00, 20.00 20.00"));
     /// ```
     #[inline]
-    pub fn smooth_curve_to(self, (x, y): Point2D, (cx2, cy2): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!(
-                "{} S {:.2} {:.2}, {:.2} {:.2}",
-                self.inner_string, cx2, cy2, x, y
-            ),
-        }
+    pub fn smooth_curve_to(mut self, (x, y): Point2D, (cx2, cy2): Point2D) -> Self {
+        self.inner_string
+            .push_str(&format!(" S {:.2} {:.2}, {:.2} {:.2}", cx2, cy2, x, y));
+        self
     }
 
     /// Appends a smooth curve (following a normal curve) to a certain point
@@ -352,13 +341,10 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 c 15.00 20.00, 20.00 25.00, 10.00 10.00 s -5.00 -10.00, 20.00 20.00"));
     /// ```
     #[inline]
-    pub fn r_smooth_curve_to(self, (dx, dy): Point2D, (cdx2, cdy2): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!(
-                "{} s {:.2} {:.2}, {:.2} {:.2}",
-                self.inner_string, cdx2, cdy2, dx, dy
-            ),
-        }
+    pub fn r_smooth_curve_to(mut self, (dx, dy): Point2D, (cdx2, cdy2): Point2D) -> Self {
+        self.inner_string
+            .push_str(&format!(" s {:.2} {:.2}, {:.2} {:.2}", cdx2, cdy2, dx, dy));
+        self
     }
 
     /// Appends a quadratic curve to a certain point
@@ -380,13 +366,10 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 Q 15.00 20.00, 10.00 10.00"));
     /// ```
     #[inline]
-    pub fn quad_curve_to(self, (x, y): Point2D, (cx1, cy1): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!(
-                "{} Q {:.2} {:.2}, {:.2} {:.2}",
-                self.inner_string, cx1, cy1, x, y
-            ),
-        }
+    pub fn quad_curve_to(mut self, (x, y): Point2D, (cx1, cy1): Point2D) -> Self {
+        self.inner_string
+            .push_str(&format!(" Q {:.2} {:.2}, {:.2} {:.2}", cx1, cy1, x, y));
+        self
     }
 
     /// Appends a quadratic curve to a certain point
@@ -408,13 +391,10 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 q 15.00 20.00, 10.00 10.00"));
     /// ```
     #[inline]
-    pub fn r_quad_curve_to(self, (dx, dy): Point2D, (cdx1, cdy1): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!(
-                "{} q {:.2} {:.2}, {:.2} {:.2}",
-                self.inner_string, cdx1, cdy1, dx, dy
-            ),
-        }
+    pub fn r_quad_curve_to(mut self, (dx, dy): Point2D, (cdx1, cdy1): Point2D) -> Self {
+        self.inner_string
+            .push_str(&format!(" q {:.2} {:.2}, {:.2} {:.2}", cdx1, cdy1, dx, dy));
+        self
     }
 
     /// Appends a quadratic curve (following a quadratic curve) to a certain point
@@ -438,10 +418,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 Q 15.00 20.00, 10.00 10.00 T 20.00 20.00"));
     /// ```
     #[inline]
-    pub fn quad_string_to(self, (x, y): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} T {:.2} {:.2}", self.inner_string, x, y),
-        }
+    pub fn quad_string_to(mut self, (x, y): Point2D) -> Self {
+        self.inner_string.push_str(&format!(" T {:.2} {:.2}", x, y));
+        self
     }
 
     /// Appends a quadratic curve (following a quadratic curve) to a certain point
@@ -465,10 +444,10 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 3.00 3.00 q 15.00 20.00, 10.00 10.00 t 20.00 20.00"));
     /// ```
     #[inline]
-    pub fn r_quad_string_to(self, (dx, dy): Point2D) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} t {:.2} {:.2}", self.inner_string, dx, dy),
-        }
+    pub fn r_quad_string_to(mut self, (dx, dy): Point2D) -> Self {
+        self.inner_string
+            .push_str(&format!(" t {:.2} {:.2}", dx, dy));
+        self
     }
 
     /// Appends an arc to a certain point to the [PathDefinitionString]
@@ -490,7 +469,7 @@ impl PathDefinitionString {
     /// ```
     #[inline]
     pub fn arc_to(
-        self,
+        mut self,
         (x, y): Point2D,
         (rx, ry): (f64, f64),
         x_axis_rotation: f64,
@@ -501,12 +480,11 @@ impl PathDefinitionString {
 
         let sweep_flag = if sweep_flag { '1' } else { '0' };
 
-        PathDefinitionString {
-            inner_string: format!(
-                "{} A {:.2} {:.2} {:.2} {} {} {:.2} {:.2}",
-                self.inner_string, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, x, y
-            ),
-        }
+        self.inner_string.push_str(&format!(
+            " A {:.2} {:.2} {:.2} {} {} {:.2} {:.2}",
+            rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, x, y
+        ));
+        self
     }
 
     /// Appends an arc to a certain point relative to where the last action ended to the [PathDefinitionString]
@@ -528,7 +506,7 @@ impl PathDefinitionString {
     /// ```
     #[inline]
     pub fn r_arc_to(
-        self,
+        mut self,
         (dx, dy): Point2D,
         (rx, ry): (f64, f64),
         x_axis_rotation: f64,
@@ -539,12 +517,11 @@ impl PathDefinitionString {
 
         let sweep_flag = if sweep_flag { '1' } else { '0' };
 
-        PathDefinitionString {
-            inner_string: format!(
-                "{} a {:.2} {:.2} {:.2} {} {} {:.2} {:.2}",
-                self.inner_string, rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, dx, dy
-            ),
-        }
+        self.inner_string.push_str(&format!(
+            " a {:.2} {:.2} {:.2} {} {} {:.2} {:.2}",
+            rx, ry, x_axis_rotation, large_arc_flag, sweep_flag, dx, dy
+        ));
+        self
     }
 
     /// Closes a [PathDefinitionString]
@@ -567,10 +544,9 @@ impl PathDefinitionString {
     /// # assert!(path_definition_string.is_str("M 0.00 0.00 L 10.00 10.00 L 10.00 0.00 Z"));
     /// ```
     #[inline]
-    pub fn close_path(self) -> Self {
-        PathDefinitionString {
-            inner_string: format!("{} Z", self.inner_string),
-        }
+    pub fn close_path(mut self) -> Self {
+        self.inner_string.push_str(" Z");
+        self
     }
 }
 
