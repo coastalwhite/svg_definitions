@@ -95,9 +95,10 @@ impl Element {
     }
 
     fn is_allowed_inner(text: &str) -> bool {
-        let regular_expression =
-            regex::Regex::new(r#"[a-zA-Z0-9' \\-_/.!?:;(){}[\\]`~&,"]+"#).unwrap();
-        regular_expression.is_match(text)
+        let allowed_chars = r#"' \-_/.!?:;(){}[]`~&,""#;
+
+        text.chars()
+            .all(|c| c.is_ascii_alphanumeric() || allowed_chars.contains(c))
     }
 
     /// Sets the inner text to a plain string
